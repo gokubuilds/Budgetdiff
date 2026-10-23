@@ -2,7 +2,10 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI
 
-from app.config import Settings, get_settings
+try:
+    from app.config import Settings, get_settings
+except ImportError:
+    from config import Settings, get_settings
 
 app = FastAPI(title="Examate RAG starter", version="0.1.0")
 
