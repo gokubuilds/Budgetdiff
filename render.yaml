@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: budgetdiff-api
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: APP_NAME
+        value: BudgetDiff
+      - key: ENVIRONMENT
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PRIMARY_MODEL
+        value: gemini-1.5-pro
+      - key: FALLBACK_MODEL
+        value: gemini-1.5-flash
+      - key: LLM_FALLBACK_MODEL
+        value: gemini-1.5-flash
+      - key: DATABASE_URL
+        value: sqlite:///./data/usage.db
+

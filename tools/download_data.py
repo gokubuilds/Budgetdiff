@@ -1,9 +1,9 @@
 import csv
 import io
-from pathlib import Path
 import shutil
 import urllib.request
 from datetime import UTC, datetime
+from pathlib import Path
 
 from pypdf import PdfReader
 

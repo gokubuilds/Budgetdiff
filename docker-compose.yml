@@ -1,0 +1,42 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: budgetdiff-db
+    environment:
+      POSTGRES_DB: budgetdiff
+      POSTGRES_USER: budgetuser
+      POSTGRES_PASSWORD: budgetpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U budgetuser -d budgetdiff"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: budgetdiff-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_NAME: BudgetDiff
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql://budgetuser:budgetpass@db:5432/budgetdiff
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      PRIMARY_MODEL: ${PRIMARY_MODEL:-gemini-1.5-pro}
+      FALLBACK_MODEL: ${FALLBACK_MODEL:-gemini-1.5-flash}
+      LLM_FALLBACK_MODEL: ${LLM_FALLBACK_MODEL:-gemini-1.5-flash}
+      LLM_TIMEOUT_SECONDS: 10.0
+      LLM_MAX_RETRIES: 2
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  pgdata:
